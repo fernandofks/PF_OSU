@@ -30,22 +30,19 @@ class circulo(pygame.sprite.Sprite):
         
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
-        
-        # Sorteia um lugar inicial em x
-        self.rect.centerx = botao.posicao()[0]
-        # Sorteia um lugar inicial em y
-        self.rect.centery = botao.posicao()[1]
-    # Metodo que atualiza a posição da navinha
+
+        self.rect.centerx = botao1.posicao()[0]
+        self.rect.centery = botao1.posicao()[1]
     def update1(self):
         self.rect = self.image.get_rect()
-        self.rect.centerx = botao.posicao()[0]
-        self.rect.centery = botao.posicao()[1]
+        self.rect.centerx = botao1.posicao()[0]
+        self.rect.centery = botao1.posicao()[1]
         mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
         self.image = pygame.transform.scale(mob_img, (tamanho, tamanho))
         self.image.set_colorkey(BLACK)
 
 
-class Mob(pygame.sprite.Sprite):
+class botao(pygame.sprite.Sprite):
     # Construtor da classe.
     def __init__(self):
         
@@ -125,10 +122,10 @@ HEIGHT = pygame.display.Info().current_h
 # added to this list. The list is managed by a class called 'Group.'
 all_sprites_list = pygame.sprite.Group()
 tamanho=200
-botao=Mob()
+botao1=botao()
 timing=circulo()
 all_sprites_list.add(timing)
-all_sprites_list.add(botao)
+all_sprites_list.add(botao1)
 # This represents the ball controlled by the player
 player = Player()
 #screen.fill(BLACK)
@@ -140,13 +137,14 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.sprite.collide_circle(player,botao):
-                    if tamanho>30 and tamanho<70:
-                        botao.kill()
-                        timing.kill()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pos()[0]<botao1.posicao()[0]+25 and pygame.mouse.get_pos()[0]>botao1.posicao()[0]-25 and pygame.mouse.get_pos()[1]>botao1.posicao()[1]-25 and pygame.mouse.get_pos()[1]<botao1.posicao()[1]+25:
+                if tamanho>30 and tamanho<70:
+                    botao1.kill()
+                    timing.kill()
+                        
     if tamanho>35:
-        tamanho-=5
+        tamanho-=3
         timing.update1()
 
     all_sprites_list.update()
