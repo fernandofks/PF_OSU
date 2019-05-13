@@ -1,7 +1,7 @@
 import pygame
 from os import path
 import random
-
+import time
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -13,45 +13,19 @@ DKGREEN = (0, 100, 0)
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), "snd")
 fnt_dir = path.join(path.dirname(__file__), "font")
-class circulo(pygame.sprite.Sprite):
-    def __init__(self):
-        
-        # Construtor da classe pai (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        
-        # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
-        
-        # Diminuindo o tamanho da imagem.
-        self.image = pygame.transform.scale(mob_img, (tamanho, tamanho))
-        
-        # Deixando transparente.
-        self.image.set_colorkey(BLACK)
-        
-        # Detalhes sobre o posicionamento.
-        self.rect = self.image.get_rect()
-
-        self.rect.centerx = botao1.posicao()[0]
-        self.rect.centery = botao1.posicao()[1]
-    def update1(self):
-        self.rect = self.image.get_rect()
-        self.rect.centerx = botao1.posicao()[0]
-        self.rect.centery = botao1.posicao()[1]
-        mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
-        self.image = pygame.transform.scale(mob_img, (tamanho, tamanho))
-        self.image.set_colorkey(BLACK)
-
-
-class botao(pygame.sprite.Sprite):
+i=0
+d={}        
+class Botao(pygame.sprite.Sprite):
+    n=i
+    
     # Construtor da classe.
-    def __init__(self):
+    def __init__(self,n):
         
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
         mob_img = pygame.image.load(path.join(img_dir, "botaoup.jpg")).convert()
-        
         # Diminuindo o tamanho da imagem.
         self.image = pygame.transform.scale(mob_img, (50, 50))
         
@@ -70,6 +44,42 @@ class botao(pygame.sprite.Sprite):
 
     def posicao(self):
         return self.rect.centerx, self.rect.centery
+    def update(self):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pos()[0]<self.posicao()[0]+25 and pygame.mouse.get_pos()[0]>self.posicao()[0]-25 and pygame.mouse.get_pos()[1]>self.posicao()[1]-25 and pygame.mouse.get_pos()[1]<self.posicao()[1]+25:
+                if tamanho>30 and tamanho<70:
+                    self.kill()
+
+class Circulo(pygame.sprite.Sprite):
+    tamanho=200
+    n=i
+    def __init__(self, n):
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        
+        # Carregando a imagem de fundo.
+        mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
+        
+        # Diminuindo o tamanho da imagem.
+        self.image = pygame.transform.scale(mob_img, (self.tamanho, self.tamanho))
+        
+        # Deixando transparente.
+        self.image.set_colorkey(BLACK)
+        
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+
+        self.rect.centerx = d["botao{0}".format(self.n)].posicao()[0]
+        self.rect.centery = d["botao{0}".format(self.n)].posicao()[1]
+    def update(self):
+        self.rect = self.image.get_rect()
+        self.rect.centerx =d["botao{0}".format(self.n)].posicao()[0]
+        self.rect.centery = d["botao{0}".format(self.n)].posicao()[1]
+        mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
+        if self.tamanho>30:
+            self.tamanho-=5
+            self.image = pygame.transform.scale(mob_img, (self.tamanho, self.tamanho))
+            self.image.set_colorkey(BLACK)
 class Player(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block, and its x and y position
     def __init__(self):
@@ -102,7 +112,6 @@ class Player(pygame.sprite.Sprite):
         # located
         self.rect.centerx = x
         self.rect.centery = y
-
 pygame.init()
 
 # Set the height and width of the screen
@@ -113,7 +122,6 @@ pygame.mouse.set_visible(False)
 
 # Loop until the user clicks the close button.
 done = False
-
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 WIDTH = pygame.display.Info().current_w
@@ -121,35 +129,35 @@ HEIGHT = pygame.display.Info().current_h
 # This is a list of 'sprites.' Each sprite in the program (there is only 1) is
 # added to this list. The list is managed by a class called 'Group.'
 all_sprites_list = pygame.sprite.Group()
-tamanho=200
-botao1=botao()
-timing=circulo()
-all_sprites_list.add(timing)
-all_sprites_list.add(botao1)
 # This represents the ball controlled by the player
 player = Player()
+all_sprites_list.add(player)
 #screen.fill(BLACK)
 # Add the ball to the list of player-controlled objects
-all_sprites_list.add(player)
-
+tempo=[1.00, 5.00]
+all_botoes=pygame.sprite.Group()
+all_circulos=pygame.sprite.Group()
 # -------- Main Program Loop -----------
 while not done:
+    if int(time.process_time()) in tempo:
+        a=Botao(i)
+        all_botoes.add(a)
+        d["botao{0}".format(i)]=a
+        all_botoes.add(a)
+        b=Circulo(i)
+        all_circulos.add(b)
+        d["circulo{0}".format(i)]=b
+        i+=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.mouse.get_pos()[0]<botao1.posicao()[0]+25 and pygame.mouse.get_pos()[0]>botao1.posicao()[0]-25 and pygame.mouse.get_pos()[1]>botao1.posicao()[1]-25 and pygame.mouse.get_pos()[1]<botao1.posicao()[1]+25:
-                if tamanho>30 and tamanho<70:
-                    botao1.kill()
-                    timing.kill()
-                        
-    if tamanho>35:
-        tamanho-=3
-        timing.update1()
-
-    all_sprites_list.update()
+    all_botoes.update()
+    all_circulos.update()
+    player.update()
     #limpa a tela depois desenha
     screen.fill(BLACK)
+    all_botoes.draw(screen)
+    all_circulos.draw(screen)
     all_sprites_list.draw(screen)
 
     # Limit to 60 frames per second
