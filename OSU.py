@@ -16,7 +16,6 @@ fnt_dir = path.join(path.dirname(__file__), "font")
 i=0
 d={}        
 class Botao(pygame.sprite.Sprite):
-    n=i
     
     # Construtor da classe.
     def __init__(self,n):
@@ -39,6 +38,8 @@ class Botao(pygame.sprite.Sprite):
         self.rect.centerx = random.randrange(WIDTH - 100)
         # Sorteia um lugar inicial em y
         self.rect.centery = random.randrange(HEIGHT - 100)
+        
+        self.n = n
 
         # Melhora a colisão estabelecendo um raio de um circulo
 
@@ -52,8 +53,9 @@ class Botao(pygame.sprite.Sprite):
 
 class Circulo(pygame.sprite.Sprite):
     tamanho=200
-    n=i
+    
     def __init__(self, n):
+        self.n=n
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
@@ -80,6 +82,9 @@ class Circulo(pygame.sprite.Sprite):
             self.tamanho-=5
             self.image = pygame.transform.scale(mob_img, (self.tamanho, self.tamanho))
             self.image.set_colorkey(BLACK)
+            if d["circulo{0}".format(self.n)].tamanho>30 and d["circulo{0}".format(self.n)].tamanho<70:
+                self.kill()
+
 class Player(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block, and its x and y position
     def __init__(self):
@@ -167,5 +172,5 @@ while not done:
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
-
+    
 pygame.quit()
