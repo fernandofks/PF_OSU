@@ -47,7 +47,7 @@ class Botao(pygame.sprite.Sprite):
     def update(self):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pos()[0]<self.posicao()[0]+25 and pygame.mouse.get_pos()[0]>self.posicao()[0]-25 and pygame.mouse.get_pos()[1]>self.posicao()[1]-25 and pygame.mouse.get_pos()[1]<self.posicao()[1]+25:
-                if tamanho>30 and tamanho<70:
+                if d["circulo{0}".format(self.n)].tamanho>30 and d["circulo{0}".format(self.n)].tamanho<70:
                     self.kill()
 
 class Circulo(pygame.sprite.Sprite):
@@ -137,9 +137,11 @@ all_sprites_list.add(player)
 tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
+contador=0
 # -------- Main Program Loop -----------
 while not done:
-    if int(time.process_time()) in tempo:
+    contador+=1
+    if contador%60==0:
         a=Botao(i)
         all_botoes.add(a)
         d["botao{0}".format(i)]=a
@@ -161,7 +163,7 @@ while not done:
     all_sprites_list.draw(screen)
 
     # Limit to 60 frames per second
-    clock.tick(144)
+    clock.tick(60)
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
