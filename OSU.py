@@ -143,18 +143,20 @@ tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
 contador=0
+beatMap=[1, 2, 6]
 # -------- Main Program Loop -----------
 while not done:
     contador+=1
     if contador%60==0:
-        a=Botao(i)
-        all_botoes.add(a)
-        d["botao{0}".format(i)]=a
-        all_botoes.add(a)
-        b=Circulo(i)
-        all_circulos.add(b)
-        d["circulo{0}".format(i)]=b
-        i+=1
+        if contador/60 in beatMap:
+            a=Botao(i)
+            all_botoes.add(a)
+            d["botao{0}".format(i)]=a
+            all_botoes.add(a)
+            b=Circulo(i)
+            all_circulos.add(b)
+            d["circulo{0}".format(i)]=b
+            i+=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
