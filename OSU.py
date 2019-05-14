@@ -48,7 +48,7 @@ class Botao(pygame.sprite.Sprite):
     def update(self):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pos()[0]<self.posicao()[0]+25 and pygame.mouse.get_pos()[0]>self.posicao()[0]-25 and pygame.mouse.get_pos()[1]>self.posicao()[1]-25 and pygame.mouse.get_pos()[1]<self.posicao()[1]+25:
-                if d["circulo{0}".format(self.n)].tamanho>30 and d["circulo{0}".format(self.n)].tamanho<70:
+                if d["circulo{0}".format(self.n)].tamanho>40 and d["circulo{0}".format(self.n)].tamanho<70:
                     self.kill()
 
 class Circulo(pygame.sprite.Sprite):
@@ -78,11 +78,11 @@ class Circulo(pygame.sprite.Sprite):
         self.rect.centerx =d["botao{0}".format(self.n)].posicao()[0]
         self.rect.centery = d["botao{0}".format(self.n)].posicao()[1]
         mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
-        if self.tamanho>30:
+        if self.tamanho>40:
             self.tamanho-=5
             self.image = pygame.transform.scale(mob_img, (self.tamanho, self.tamanho))
             self.image.set_colorkey(BLACK)
-            if d["circulo{0}".format(self.n)].tamanho>30 and d["circulo{0}".format(self.n)].tamanho<70:
+            if d["circulo{0}".format(self.n)].tamanho<45:
                 self.kill()
 
 class Player(pygame.sprite.Sprite):
@@ -143,7 +143,7 @@ tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
 contador=0
-beatMap=[0.5, 1, 1.5, 2, 3, 6]
+beatMap=[0.5, 1, 1.5, 2, 3.5, 4.5, 5.1, 6]
 # -------- Main Program Loop -----------
 while not done:
     contador+=1
