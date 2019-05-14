@@ -19,7 +19,7 @@ class Botao(pygame.sprite.Sprite):
     
     # Construtor da classe.
     def __init__(self,n):
-        
+        self.n=n
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
@@ -33,15 +33,15 @@ class Botao(pygame.sprite.Sprite):
         
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
-        
-        # Sorteia um lugar inicial em x
-        self.rect.centerx = random.randrange(WIDTH - 100)
-        # Sorteia um lugar inicial em y
-        self.rect.centery = random.randrange(HEIGHT - 100)
-        
-        self.n = n
-
-        # Melhora a colisão estabelecendo um raio de um circulo
+        if len(d)!=0:
+            # Sorteia um lugar inicial em x
+            self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+random.uniform(-100,100)
+            # Sorteia um lugar inicial em y
+            self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+random.uniform(-100,100)
+        else:
+            self.rect.centerx = random.randrange(WIDTH-100)
+            # Sorteia um lugar inicial em y
+            self.rect.centery = random.randrange(HEIGHT-100)
 
     def posicao(self):
         return self.rect.centerx, self.rect.centery
@@ -143,20 +143,20 @@ tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
 contador=0
-beatMap=[1, 2, 6]
+beatMap=[0.5, 1, 1.5, 2, 3, 6]
 # -------- Main Program Loop -----------
 while not done:
     contador+=1
-    if contador%60==0:
-        if contador/60 in beatMap:
-            a=Botao(i)
-            all_botoes.add(a)
-            d["botao{0}".format(i)]=a
-            all_botoes.add(a)
-            b=Circulo(i)
-            all_circulos.add(b)
-            d["circulo{0}".format(i)]=b
-            i+=1
+   
+    if contador/60 in beatMap:
+        a=Botao(i)
+        all_botoes.add(a)
+        d["botao{0}".format(i)]=a
+        all_botoes.add(a)
+        b=Circulo(i)
+        all_circulos.add(b)
+        d["circulo{0}".format(i)]=b
+        i+=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
