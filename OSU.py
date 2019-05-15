@@ -2,6 +2,7 @@ import pygame
 from os import path
 import random
 import time
+import numpy as np
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -9,12 +10,12 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (50, 50, 255)
 DKGREEN = (0, 100, 0)
-
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), "snd")
 fnt_dir = path.join(path.dirname(__file__), "font")
 i=0
 d={}        
+borda=300
 class Botao(pygame.sprite.Sprite):
     
     # Construtor da classe.
@@ -35,9 +36,22 @@ class Botao(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         if len(d)!=0:
             # Sorteia um lugar inicial em x
-            self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+random.uniform(-100,100)
-            # Sorteia um lugar inicial em y
-            self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+random.uniform(-100,100)
+            if d["botao{0}".format(self.n-1)].posicao()[0] <borda:
+                self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+4*borda+random.uniform(-150,150)
+                self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+random.uniform(-150,150)
+            elif d["botao{0}".format(self.n-1)].posicao()[0] >WIDTH-borda:
+                self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]-4*borda+random.uniform(-150,150)
+                self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+random.uniform(-150,150)
+            elif d["botao{0}".format(self.n-1)].posicao()[1] <borda:
+                self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+4*borda+random.uniform(-150,150)
+                self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+random.uniform(-150,150)
+            elif d["botao{0}".format(self.n-1)].posicao()[1] >HEIGHT-borda:
+                self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]-4*borda+random.uniform(-150,150)
+                self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+random.uniform(-150,150)
+            else:
+                self.rect.centerx = d["botao{0}".format(self.n-1)].posicao()[0]+random.uniform(-150,150)
+                 # Sorteia um lugar inicial em y
+                self.rect.centery = d["botao{0}".format(self.n-1)].posicao()[1]+random.uniform(-150,150)
         else:
             self.rect.centerx = random.randrange(WIDTH-100)
             # Sorteia um lugar inicial em y
@@ -118,10 +132,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 pygame.init()
-
+pygame.mixer.init()
+pygame.mixer.music.load(path.join(snd_dir, "ysr.mp3"))
+pygame.mixer.music.play(0, 0)
 # Set the height and width of the screen
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN) #pygame.FULLSCREEN)
-
+WIDTH = pygame.display.Info().current_w
+HEIGHT = pygame.display.Info().current_h
 # Don't display the mouse pointer
 pygame.mouse.set_visible(False)
 
@@ -129,8 +146,7 @@ pygame.mouse.set_visible(False)
 done = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
-WIDTH = pygame.display.Info().current_w
-HEIGHT = pygame.display.Info().current_h
+
 # This is a list of 'sprites.' Each sprite in the program (there is only 1) is
 # added to this list. The list is managed by a class called 'Group.'
 all_sprites_list = pygame.sprite.Group()
@@ -143,7 +159,9 @@ tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
 contador=0
-beatMap=[0.5, 1, 1.5, 2, 3.5, 4.5, 5.1, 6]
+
+
+beatMap=np.arange(0,210, 0.5)
 # -------- Main Program Loop -----------
 while not done:
     contador+=1
