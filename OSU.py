@@ -3,6 +3,7 @@ from os import path
 import random
 import time
 import numpy as np
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -19,13 +20,13 @@ borda=300
 class Botao(pygame.sprite.Sprite):
     
     # Construtor da classe.
-    def __init__(self,n):
+    def __init__(self,n,imagem_botao):
         self.n=n
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "botaoup.jpg")).convert()
+        mob_img = imagem_botao
         # Diminuindo o tamanho da imagem.
         self.image = pygame.transform.scale(mob_img, (50, 50))
         
@@ -68,13 +69,13 @@ class Botao(pygame.sprite.Sprite):
 class Circulo(pygame.sprite.Sprite):
     tamanho=200
     
-    def __init__(self, n):
+    def __init__(self, n, imagem_circulo):
         self.n=n
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
         # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "circulo.png")).convert()
+        mob_img = imagem_circulo
         
         # Diminuindo o tamanho da imagem.
         self.image = pygame.transform.scale(mob_img, (self.tamanho, self.tamanho))
@@ -139,6 +140,21 @@ pygame.mixer.music.play(0, 0)
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN) #pygame.FULLSCREEN)
 WIDTH = pygame.display.Info().current_w
 HEIGHT = pygame.display.Info().current_h
+
+
+# Uma biblioteca com todas as mídias
+biblioteca_imagens={
+        "botao":{
+                "rosa":[pygame.image.load(path.join(img_dir, "botaoup1.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup2.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup3.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup4.jpg")).convert()],
+                "azul": [pygame.image.load(path.join(img_dir, "botaoup1azul.jpg")).convert(),pygame.image.load(path.join(img_dir, "botaoup2azul.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup3azul.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup4azul.jpg")).convert()],
+                "verde": [pygame.image.load(path.join(img_dir, "botaoup1verde.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup2verde.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup3verde.jpg")).convert(), pygame.image.load(path.join(img_dir, "botaoup4verde.jpg")).convert()]
+        },
+        "background": pygame.image.load(path.join(img_dir, "background.jpg")).convert(),
+        "circulo": pygame.image.load(path.join(img_dir, "circulo.png")).convert(),
+        "pointer": pygame.image.load(path.join(img_dir, "Pointer.png")).convert()
+    }
+        
+
 # Don't display the mouse pointer
 pygame.mouse.set_visible(False)
 
@@ -159,22 +175,38 @@ tempo=[1.00, 5.00]
 all_botoes=pygame.sprite.Group()
 all_circulos=pygame.sprite.Group()
 contador=0
-
-
 beatMap=np.arange(0,210, 0.5)
+
+
+# Para alteração de cores e numeros dos botões
+lista_de_cores = ["rosa", "azul", "verde"]
+cor_do_botao = 0
+numero_do_botao = 0
+
 # -------- Main Program Loop -----------
 while not done:
     contador+=1
-   
     if contador/60 in beatMap:
-        a=Botao(i)
+        a=Botao(i, biblioteca_imagens["botao"][lista_de_cores[cor_do_botao]][numero_do_botao])
         all_botoes.add(a)
         d["botao{0}".format(i)]=a
         all_botoes.add(a)
-        b=Circulo(i)
+        b=Circulo(i, biblioteca_imagens["circulo"])
         all_circulos.add(b)
         d["circulo{0}".format(i)]=b
         i+=1
+        
+        # Checa se foram todos os numeros
+        if numero_do_botao+1 == 4:
+             # Checa se foram todos as cores
+            if cor_do_botao+1 == 3:
+                cor_do_botao = 0
+            else:
+                cor_do_botao +=1
+            numero_do_botao = 0
+        else:
+            numero_do_botao+=1
+            
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
